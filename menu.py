@@ -1,3 +1,5 @@
+#import and use a table formatting library because writing homespun code for terminal  menus is messy
+from tabulate import tabulate
 # Menu dictionary
 menu = {
     "Snacks": {
@@ -49,10 +51,57 @@ menu = {
         "Fried banana": 4.49
     }
 }
+menu_orders = []
+# Abstract the item ordering logic into a function
+def request_menu_order(menu_items):
+    customer_choice = input('Enter the item number for the menu item you want to order: ')
+    # Check if the customer typed a number
+    if customer_choice.isnumeric():
+        # Convert the menu selection to an integer
+        customer_choice = int(customer_choice)
+
+        # Check if the menu selection is in the menu items
+        if customer_choice in menu_items.keys():
+            # Store the item name as a variable
+            ordered_item_name = menu_items[customer_choice]['Item name']
+            print(f"{ordered_item_name} ordered item name")
+
+            # Ask the customer for the quantity of the menu item
+            quantity_ordered = input(f'How many {ordered_item_name} would you like? ')
+
+            # Check if the quantity is a number, default to 1 if not
+            if not quantity_ordered.isnumeric():
+                quantity_ordered = 1
+            else:
+                quantity_ordered = int(quantity_ordered)
+
+            # Add the item name, price, and quantity to the order list
+            order_item = menu_items[customer_choice]
+            order_item['Quantity'] = quantity_ordered
+            menu_orders.append(order_item)
+            
+        else:
+            # Tell the customer they didn't select a menu option
+            print("That menu option is not available.")
+    else:
+        # Tell the customer they didn't select a number
+        print("You didn't select a number.")
+# Put the order printing logic in a function for clarity 
+def print_order(menu_orders):
+    # Use list comprehension to destructure the order into a format suitable for the tabulate function
+    table = [[order_item['Item name'], order_item["Quantity"], order_item['Price']] for order_item in menu_orders]
+    #configure table with headers
+    table_result = tabulate(table, ['Item name', 'Quantity', 'Price'])
+    #print table
+    print(table_result)
+    # calculate order total
+    total_price = sum([item['Price'] * item['Quantity'] for item in menu_orders])
+    #print total
+    print(f"The total price of your order is ${total_price:0.2f}")
+
 
 # 1. Set up order list. Order list will store a list of dictionaries for
 # menu item name, item price, and quantity ordered
-
 
 # Launch the store and present a greeting to the customer
 print("Welcome to the variety food truck.")
@@ -117,84 +166,23 @@ while place_order:
                         "Price": value
                     }
                     i += 1
-            # 2. Ask customer to input menu item number
-
-
-            # 3. Check if the customer typed a number
-
-                # Convert the menu selection to an integer
-
-
-                # 4. Check if the menu selection is in the menu items
-
-                    # Store the item name as a variable
-
-
-                    # Ask the customer for the quantity of the menu item
-
-
-                    # Check if the quantity is a number, default to 1 if not
-
-
-                    # Add the item name, price, and quantity to the order list
-
-
-                    # Tell the customer that their input isn't valid
-
-
-                # Tell the customer they didn't select a menu option
-
-        else:
-            # Tell the customer they didn't select a menu option
-            print(f"{menu_category} was not a menu option.")
-    else:
-        # Tell the customer they didn't select a number
-        print("You didn't select a number.")
-
-    while True:
+            # Call the request_menu_order function 
+            request_menu_order(menu_items)
+            
+    keep_ordering_bool = True
+    while keep_ordering_bool:
         # Ask the customer if they would like to order anything else
         keep_ordering = input("Would you like to keep ordering? (Y)es or (N)o ")
-
+        # Set the ordering condition to a boolean True if user says yes
+        keep_ordering_bool = True if keep_ordering.lower() in ['y', 'yes'] else False
         # 5. Check the customer's input
-
+        if keep_ordering_bool:
+                request_menu_order(menu_items)
                 # Keep ordering
-
-                # Exit the keep ordering question loop
-
+        else:
+            if keep_ordering.lower() not in ['n', 'no']:
+                input('Your answer was invalid. Please try again')  
+    print('Thanks for ordering!')
+    print_order(menu_orders)
                 # Complete the order
 
-                # Since the customer decided to stop ordering, thank them for
-                # their order
-
-                # Exit the keep ordering question loop
-
-
-                # Tell the customer to try again
-
-
-# Print out the customer's order
-print("This is what we are preparing for you.\n")
-
-# Uncomment the following line to check the structure of the order
-#print(order)
-
-print("Item name                 | Price  | Quantity")
-print("--------------------------|--------|----------")
-
-# 6. Loop through the items in the customer's order
-
-    # 7. Store the dictionary items as variables
-
-
-    # 8. Calculate the number of spaces for formatted printing
-
-
-    # 9. Create space strings
-
-
-    # 10. Print the item name, price, and quantity
-
-
-# 11. Calculate the cost of the order using list comprehension
-# Multiply the price by quantity for each item in the order list, then sum()
-# and print the prices.
