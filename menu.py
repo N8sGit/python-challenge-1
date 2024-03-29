@@ -86,33 +86,9 @@ def request_menu_order(menu_items):
     else:
         # Tell the customer they didn't select a number
         print("You didn't select a number.")
-# Put the order printing logic in a function for clarity 
-def print_order(menu_orders):
-    # Use list comprehension to destructure the order into a format suitable for the tabulate function
-    table = [[order_item['Item name'], order_item["Quantity"], order_item['Price']] for order_item in menu_orders]
-    #configure table with headers
-    table_result = tabulate(table, ['Item name', 'Quantity', 'Price'])
-    #print table
-    print(table_result)
-    # calculate order total
-    total_price = sum([item['Price'] * item['Quantity'] for item in menu_orders])
-    #print total
-    print(f"The total price of your order is ${total_price:0.2f}")
-
-
-# 1. Set up order list. Order list will store a list of dictionaries for
-# menu item name, item price, and quantity ordered
-
-# Launch the store and present a greeting to the customer
-print("Welcome to the variety food truck.")
-
-# Customers may want to order multiple items, so let's create a continuous
-# loop
-place_order = True
-while place_order:
-    # Ask the customer from which menu category they want to order
+#Put the menu printing code in its own function 
+def print_menu(menu):
     print("From which menu would you like to order? ")
-
     # Create a variable for the menu item number
     i = 1
     # Create a dictionary to store the menu for later retrieval
@@ -168,21 +144,55 @@ while place_order:
                     i += 1
             # Call the request_menu_order function 
             request_menu_order(menu_items)
-            
-    keep_ordering_bool = True
-    while keep_ordering_bool:
+        else: 
+            print("You entered a number that is not on the menu.")
+
+
+# Put the order printing logic in a function for clarity 
+def print_order(menu_orders):
+    # Use list comprehension to destructure the order into a format suitable for the tabulate function
+    table = [[order_item['Item name'], order_item["Quantity"], order_item['Price']] for order_item in menu_orders]
+    #configure table with headers
+    table_result = tabulate(table, ['Item name', 'Quantity', 'Price'])
+    #print table
+    print(table_result)
+    # calculate order total
+    total_price = sum([item['Price'] * item['Quantity'] for item in menu_orders])
+    #print total
+    print(f"The total price of your order is ${total_price:0.2f}")
+
+
+# 1. Set up order list. Order list will store a list of dictionaries for
+# menu item name, item price, and quantity ordered
+
+# Launch the store and present a greeting to the customer
+print("Welcome to the variety food truck.")
+
+# Customers may want to order multiple items, so let's create a continuous
+# loop
+place_order = True
+while place_order:
+    # Ask the customer from which menu category they want to order
+    print_menu(menu)
+    while True:
         # Ask the customer if they would like to order anything else
         keep_ordering = input("Would you like to keep ordering? (Y)es or (N)o ")
+        if keep_ordering.lower() in ['y', 'yes']:
+            keep_ordering_bool = True
+        elif keep_ordering.lower() in ['n', 'no']:
+            keep_ordering_bool = False
+        else:
+            #If the user enters an invalid response
+            keep_ordering_bool = None
+        match keep_ordering_bool:
+            case  True:
         # Set the ordering condition to a boolean True if user says yes
-        keep_ordering_bool = True if keep_ordering.lower() in ['y', 'yes'] else False
         # 5. Check the customer's input
-        if keep_ordering_bool:
                 request_menu_order(menu_items)
                 # Keep ordering
-        else:
-            if keep_ordering.lower() not in ['n', 'no']:
+            case False: 
+                break 
+            case _:
                 input('Your answer was invalid. Please try again')  
     print('Thanks for ordering!')
     print_order(menu_orders)
-                # Complete the order
-
